@@ -49,6 +49,11 @@ export default function NavBar({
       });
   };
 
+  // Don't show navbar on editor, preview and live pages
+  const isRoomView = path.startsWith(`/${username}/room`);
+
+  if (isRoomView) return null;
+
   return (
     <div className="border py-6">
       <div className="px-10 flex justify-between items-center">

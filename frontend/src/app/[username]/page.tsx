@@ -6,7 +6,7 @@ import { Suspense } from "react";
 import { ProjectsSkeleton } from "./skeletons/ProjectsSkeleton";
 
 // Projects
-import ProjectsTableSlot from "./@projects/page";
+import ProjectsTableSlot from "./@rooms/page";
 
 export default async function DashboardPage({
   params,

@@ -15,6 +15,13 @@ import {
 
 import { Button } from "@/components/ui/button";
 
+import {
+  PlayIcon,
+  EyeIcon,
+  EllipsisVerticalIcon,
+  PlusIcon,
+} from "lucide-react";
+
 export default function EditorHeader() {
   const params = useParams<{ username: string; projectId?: string }>();
   const { username, projectId } = params;
@@ -55,7 +62,20 @@ export default function EditorHeader() {
       </Breadcrumb>
 
       <div className="flex items-center gap-2">
-        <Button>Logout</Button>
+        <Button variant="outline" onClick={openCreatePropModal}>
+          <PlusIcon />
+        </Button>
+        <Button variant="outline">
+          Preview
+          <EyeIcon />
+        </Button>
+        <Button>
+          Share Live
+          <PlayIcon />
+        </Button>
+        <Button variant="outline">
+          <EllipsisVerticalIcon />
+        </Button>
       </div>
     </div>
   );
