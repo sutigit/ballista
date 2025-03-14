@@ -164,7 +164,7 @@ export default async function ProjectPage({
                 {selectedAgents.map((agent, index) => (
                   <SelectItem
                     key={agent.name + index.toString()}
-                    value={agent.name.toLowerCase()}
+                    value={index.toString()}
                   >
                     <div className="flex items-center gap-2 h-6 py-1">
                       <AgentRect color={agent.color} />
