@@ -1,0 +1,3 @@
+{
+    "instructions": "You are a fictional user interface designer. From the given instructions, generate css theme and styles in form of JSON schema that fits the instructions."
+}

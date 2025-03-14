@@ -1,0 +1,46 @@
+.fui-background { background-color: var(--colors-background); }
+
+/* Backgrounds */
+.fui-bg-primary { 
+    background-color: var(--colors-primary);
+    box-shadow: 0 0 0px var(--colors-primary);
+}
+.fui-bg-secondary { 
+    background-color: var(--colors-secondary); 
+    box-shadow: 0 0 0px var(--colors-secondary);
+}
+.fui-bg-accent { 
+    background-color: var(--colors-accent); 
+    box-shadow: 0 0 0px var(--colors-accent);
+}
+
+/* Text */
+.fui-text-primary { 
+    color: var(--colors-primary);
+    text-shadow: 0 0 0px var(--colors-primary); 
+}
+.fui-text-secondary { 
+    color: var(--colors-background);
+    text-shadow: 0 0 0px var(--colors-secondary); 
+}
+.fui-text-accent { 
+    color: var(--colors-accent);
+    text-shadow: 0 0 0px var(--colors-accent); 
+}
+
+/* Border */
+.fui-border-primary { 
+    border: 1px solid var(--colors-primary);
+    box-shadow: 0 0 0px var(--colors-primary), inset 0 0 0px var(--colors-primary);
+    background-color: transparent;
+}
+.fui-border-secondary { 
+    border: 1px solid var(--colors-secondary);
+    box-shadow: 0 0 0px var(--colors-secondary), inset 0 0 0px var(--colors-secondary);
+    background-color: transparent;
+}
+.fui-border-accent { 
+    border: 1px solid var(--colors-accent);
+    box-shadow: 0 0 0px var(--colors-accent), inset 0 0 0px var(--colors-accent);
+    background-color: transparent;
+}

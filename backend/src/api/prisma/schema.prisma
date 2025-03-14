@@ -1,0 +1,75 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Note, when the schema is updated, generate an updated prisma client
+// command: npx prisma generate
+generator client {
+    provider = "prisma-client-js"
+}
+
+// This is just for connecting to the database
+datasource db {
+    provider = "postgresql"
+    url      = env("DATABASE_URL")
+}
+
+// These are my models to use with psrima migration
+// See docs for https://www.prisma.io/docs/orm/prisma-migrate/getting-started 
+
+// command: npx prisma migrate dev --name <name_of_migration>
+
+// Each row consists of [name] [type] [attributes]/[modifier]
+model User {
+    id        String   @id @default(uuid())
+    username  String   @unique
+    password  String
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    Project Project[]
+}
+
+model Project {
+    id        String   @id @default(uuid())
+    name      String
+    owner     User     @relation(fields: [ownerId], references: [id])
+    ownerId   String
+    threadId  String
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    Screen Screen[]
+}
+
+model Screen {
+    id        String     @id @default(uuid())
+    name      String
+    project   Project    @relation(fields: [projectId], references: [id])
+    projectId String
+    live      Boolean    @default(false)
+    pin       String     @unique @default(nanoid(8)) @db.VarChar(8)
+    locked    Boolean    @default(false)
+    type      ScreenType @default(LARGE)
+    layout    Json
+    theme     Json
+    content   Json
+    createdAt DateTime   @default(now())
+    updatedAt DateTime   @updatedAt
+
+    Thumbnail Thumbnail?
+}
+
+enum ScreenType {
+    SMALL
+    MEDIUM
+    LARGE
+    XLARGE
+}
+
+model Thumbnail {
+    id        String   @id @default(uuid())
+    screen    Screen   @relation(fields: [screenId], references: [id], onDelete: Cascade)
+    screenId  String   @unique
+    image     Bytes
+    createdAt DateTime @default(now())
+}

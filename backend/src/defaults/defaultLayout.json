@@ -1,0 +1,123 @@
+{
+    "type": "div",
+    "flexContainer": {
+        "container": "flex",
+        "flexDirection": "column",
+        "justifyContent": "space-between",
+        "alignItems": "stretch",
+        "gap": "16px"
+    },
+    "flexItem": {
+        "flex": "1",
+        "alignSelf": "stretch"
+    },
+    "children": [
+        {
+            "type": "div",
+            "flexContainer": {
+                "container": "flex",
+                "flexDirection": "row",
+                "justifyContent": "space-between",
+                "alignItems": "center",
+                "gap": "8px"
+            },
+            "flexItem": {
+                "flex": "0 1 auto",
+                "alignSelf": "stretch"
+            },
+            "children": [
+                {
+                    "type": "codeDisplay",
+                    "flexContainer": {
+                        "container": "flex",
+                        "flexDirection": "column",
+                        "justifyContent": "center",
+                        "alignItems": "stretch",
+                        "gap": "8px"
+                    },
+                    "flexItem": {
+                        "flex": "1",
+                        "alignSelf": "center"
+                    },
+                    "children": []
+                },
+                {
+                    "type": "chartDisplay",
+                    "flexContainer": {
+                        "container": "flex",
+                        "flexDirection": "column",
+                        "justifyContent": "center",
+                        "alignItems": "stretch",
+                        "gap": "8px"
+                    },
+                    "flexItem": {
+                        "flex": "1",
+                        "alignSelf": "center"
+                    },
+                    "children": []
+                }
+            ]
+        },
+        {
+            "type": "div",
+            "flexContainer": {
+                "container": "flex",
+                "flexDirection": "row",
+                "justifyContent": "space-evenly",
+                "alignItems": "center",
+                "gap": "16px"
+            },
+            "flexItem": {
+                "flex": "0 1 auto",
+                "alignSelf": "stretch"
+            },
+            "children": [
+                {
+                    "type": "metricDisplay",
+                    "flexContainer": {
+                        "container": "flex",
+                        "flexDirection": "column",
+                        "justifyContent": "center",
+                        "alignItems": "center",
+                        "gap": "4px"
+                    },
+                    "flexItem": {
+                        "flex": "1",
+                        "alignSelf": "center"
+                    },
+                    "children": []
+                },
+                {
+                    "type": "metricDisplay",
+                    "flexContainer": {
+                        "container": "flex",
+                        "flexDirection": "column",
+                        "justifyContent": "center",
+                        "alignItems": "center",
+                        "gap": "4px"
+                    },
+                    "flexItem": {
+                        "flex": "1",
+                        "alignSelf": "center"
+                    },
+                    "children": []
+                }
+            ]
+        },
+        {
+            "type": "dataTableDisplay",
+            "flexContainer": {
+                "container": "flex",
+                "flexDirection": "column",
+                "justifyContent": "center",
+                "alignItems": "stretch",
+                "gap": "8px"
+            },
+            "flexItem": {
+                "flex": "2",
+                "alignSelf": "center"
+            },
+            "children": []
+        }
+    ]
+}

@@ -1,0 +1,67 @@
+{
+    "codeDisplay": {
+        "content": "function generateCustomizationOptions() {\n  const options = {\n    theme: getTheme(),\n    layout: getLayout('grid'),\n    animations: enableAnimations(),\n    widgets: ['weather', 'calendar', 'stocks'],\n    notifications: activateNotifications('on'),\n  };\n  applyOptions(options);\n}\n\nfunction getTheme() {\n  return 'futuristic';\n}\n\nfunction getLayout(defaultLayout) {\n  return defaultLayout || 'list';\n}\n\nfunction enableAnimations() {\n  return true;\n}\n\nfunction activateNotifications(status) {\n  return status === 'on';\n}"
+    },
+    "chartDisplay": {
+        "labels": [
+            "Jupiter",
+            "Mars",
+            "Earth",
+            "Venus",
+            "Mercury"
+        ],
+        "values": [
+            57,
+            23,
+            79,
+            44,
+            31
+        ],
+        "chartType": "radar",
+        "chartShape": "sine"
+    },
+    "metricDisplay": {
+        "labels": [
+            "CPU Usage",
+            "RAM Usage",
+            "Disk Space",
+            "Network",
+            "GPU Load"
+        ],
+        "values": [
+            65,
+            42,
+            88,
+            70,
+            54
+        ]
+    },
+    "dataTableDisplay": {
+        "body": [
+            [
+                "Futuristic",
+                "Enable",
+                "Grid",
+                "On"
+            ],
+            [
+                "Modern",
+                "Disable",
+                "List",
+                "Off"
+            ],
+            [
+                "Classic",
+                "Enable",
+                "Stacked",
+                "On"
+            ]
+        ],
+        "headers": [
+            "Theme",
+            "Animations",
+            "Layout",
+            "Notifications"
+        ]
+    }
+}

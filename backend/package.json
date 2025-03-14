@@ -1,0 +1,49 @@
+{
+  "name": "ballista-backend",
+  "version": "1.0.0",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc --project tsconfig.json && tsc-alias -p tsconfig.json",
+    "start": "node dist/index.js",
+    "dev": "nodemon -r tsconfig-paths/register src/index.ts",
+
+    "prisma:db:clear": "ts-node -r tsconfig-paths/register src/api/prisma/scripts/clearDB.ts",
+    "openai:sandbox:chat": "ts-node -r tsconfig-paths/register src/api/openai/sandbox/chat.ts"
+  },
+  "keywords": [
+    "node",
+    "typescript",
+    "express"
+  ],
+  "prisma": {
+    "schema": "src/api/prisma/schema.prisma"
+  },
+  "author": "sutigit",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "@prisma/client": "^6.1.0",
+    "bcrypt": "^5.1.1",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "jsonwebtoken": "^9.0.2",
+    "openai": "^4.76.0",
+    "tsconfig-paths": "^4.2.0",
+    "xss": "^1.0.15",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@types/bcrypt": "^5.0.2",
+    "@types/cors": "^2.8.17",
+    "@types/express": "^4.17.21",
+    "@types/jsonwebtoken": "^9.0.7",
+    "@types/node": "^22.10.1",
+    "concurrently": "^9.1.0",
+    "nodemon": "^3.1.7",
+    "prisma": "^6.1.0",
+    "ts-node": "^10.9.2",
+    "tsc-alias": "^1.8.10",
+    "typescript": "^5.7.2"
+  }
+}

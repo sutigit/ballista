@@ -1,0 +1,18 @@
+{
+    "name": "update_story_content",
+    "description": "Updates, modifies or generates new textual content for fictional user interface based on the provided text. Should be called when user intents to modify the textual contents.",
+    "strict": true,
+    "parameters": {
+        "type": "object",
+        "properties": {
+            "prompt": {
+                "type": "string",
+                "description": "The prompt to update the textual content from"
+            }
+        },
+        "additionalProperties": false,
+        "required": [
+            "prompt"
+        ]
+    }
+}

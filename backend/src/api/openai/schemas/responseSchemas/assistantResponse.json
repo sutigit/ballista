@@ -1,0 +1,22 @@
+{
+    "name": "assistant_response",
+    "strict": true,
+    "schema": {
+        "type": "object",
+        "properties": {
+            "updateMessage": {
+                "type": "string",
+                "description": "Brief summary message of updates that were made to the fictional user interface."
+            },
+            "noUpdatesMessage": {
+                "type": "string",
+                "description": "In case no updates, modifications or design generations were made, politely ask to modify the message again. Try to give a short example on how to modify the message so that it becomes more instructive."
+            }
+        },
+        "required": [
+            "updateMessage",
+            "noUpdatesMessage"
+        ],
+        "additionalProperties": false
+    }
+}

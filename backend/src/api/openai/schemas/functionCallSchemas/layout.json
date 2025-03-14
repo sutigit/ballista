@@ -1,0 +1,18 @@
+{
+    "name": "update_layout",
+    "description": "Updates, modifies or generates new layout for fictional user interface based on the provided text. Should be called when user intents to modify the ui layout.",
+    "strict": true,
+    "parameters": {
+        "type": "object",
+        "properties": {
+            "prompt": {
+                "type": "string",
+                "description": "The prompt to update the layout from"
+            }
+        },
+        "additionalProperties": false,
+        "required": [
+            "prompt"
+        ]
+    }
+}
