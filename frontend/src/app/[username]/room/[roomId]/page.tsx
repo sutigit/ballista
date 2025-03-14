@@ -18,24 +18,18 @@ import {
 
 const AdjustmentSelection = ({
   label,
-  options,
+  children,
 }: {
   label: string;
-  options: string[];
+  children: React.ReactNode;
 }) => (
   <Select>
-    <SelectTrigger className="w-[300px]">
+    <SelectTrigger className="w-[320px]">
       <span className="opacity-75">{`${label}:`}</span>
       <SelectValue placeholder="" />
     </SelectTrigger>
     <SelectContent>
-      <SelectGroup>
-        {options.map((option) => (
-          <SelectItem key={option} value={option.toLowerCase()}>
-            {option}
-          </SelectItem>
-        ))}
-      </SelectGroup>
+      <SelectGroup>{children}</SelectGroup>
     </SelectContent>
   </Select>
 );
@@ -58,7 +52,7 @@ export default async function ProjectPage({
   );
 
   const AgentOption = ({ children }: { children: React.ReactNode }) => (
-    <div className="inline-flex items-center bg-white justify-between gap-3 py-3 pl-4 pr-1 border rounded-full h-12">
+    <div className="inline-flex items-center bg-white justify-between gap-3 py-3 pl-4 border rounded-full h-11">
       {children}
       <Button variant="ghost">
         <PlusIcon />
@@ -104,14 +98,18 @@ export default async function ProjectPage({
     },
   ];
 
-  const selectedAgents = [agents[0], agents[1]];
+  const selectedAgents = [agents[0], agents[1], agents[3], agents[3]];
 
   // replace 2 first slots with the idealist and the realist
   debateRoom[0] = selectedAgents[0];
   debateRoom[1] = selectedAgents[1];
+  debateRoom[2] = selectedAgents[2];
+  debateRoom[3] = selectedAgents[3];
 
   const turnPolicies = ["Round-robin", "Random"];
   const numberOfTurns = [5, 10, 15, 20, 25];
+
+  const turn = 0;
 
   return (
     <div className="bg-zinc-100 h-screen min-h-screen">
@@ -119,8 +117,8 @@ export default async function ProjectPage({
       <div className="h-full w-1/3 bg-white p-8 flex flex-col gap-8">
         {/* Agent selection */}
         <div>
-          <h2 className="font-bold py-2">Agent selection</h2>
-          <div className="flex flex-wrap gap-2 p-4 bg-zinc-100 rounded-lg">
+          <h2 className="font-medium py-2">Agent selection</h2>
+          <div className="flex flex-wrap gap-2 p-4 bg-zinc-100 rounded-lg text-sm">
             {agents.map((agent) => (
               <AgentOption key={agent.name}>
                 <AgentRect color={agent.color} />
@@ -131,37 +129,60 @@ export default async function ProjectPage({
         </div>
 
         {/* Debate settings */}
-        <div className="w-full">
-          <h2 className="font-bold py-2">Debate settings</h2>
-          <div className="flex gap-4">
+        <div>
+          <h2 className="font-medium py-2">Debate settings</h2>
+          <div className="flex gap-5">
             {/* Debate room */}
-            <div className="w-40 aspect-square rounded-2xl border grid  grid-rows-2 grid-cols-2 gap-4 p-4">
+            <div className="w-40 aspect-square rounded-2xl border grid  grid-rows-2 grid-cols-2 gap-5 p-5">
               {debateRoom.map((slot, index) => (
                 <div
                   key={index}
-                  className={`rounded-lg border-blue-200 ${slot.color}`}
+                  className={`rounded-lg outline-zinc-600 outline-offset-2 ${
+                    slot.color
+                  } ${index === turn && "outline"}`}
                 />
               ))}
             </div>
 
             {/* Adjustments */}
             <div className="space-y-2">
-              <AdjustmentSelection label="Turn policy" options={turnPolicies} />
-              <AdjustmentSelection
-                label="Number of turns"
-                options={numberOfTurns.map((num) => num.toString())}
-              />
-              <AdjustmentSelection
-                label="Debate starter"
-                options={agents.map((agent) => agent.name)}
-              />
+              <AdjustmentSelection label="Turn policy">
+                {turnPolicies.map((option) => (
+                  <SelectItem key={option} value={option.toLowerCase()}>
+                    {option}
+                  </SelectItem>
+                ))}
+              </AdjustmentSelection>
+              <AdjustmentSelection label="Number of turns">
+                {numberOfTurns.map((option) => (
+                  <SelectItem key={option} value={option.toString()}>
+                    {option}
+                  </SelectItem>
+                ))}
+              </AdjustmentSelection>
+              <AdjustmentSelection label="Debate starter">
+                {selectedAgents.map((agent, index) => (
+                  <SelectItem
+                    key={agent.name + index.toString()}
+                    value={agent.name.toLowerCase()}
+                  >
+                    <div className="flex items-center gap-2 h-6 py-1">
+                      <AgentRect color={agent.color} />
+                      {agent.name}
+                      <span className="opacity-50">{`(Slot ${
+                        index + 1
+                      })`}</span>
+                    </div>
+                  </SelectItem>
+                ))}
+              </AdjustmentSelection>
             </div>
           </div>
         </div>
 
         {/* Debate subject textfield */}
         <div>
-          <h2 className="font-bold py-2">Debate subject</h2>
+          <h2 className="font-medium py-2">Debate subject</h2>
           <Textarea></Textarea>
         </div>
 
