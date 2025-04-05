@@ -1,0 +1,140 @@
+import OpenAI from "openai";
+import dotenv from "dotenv";
+import fs from "fs";
+import { Thread } from "openai/resources/beta/threads/threads.mjs";
+
+dotenv.config();
+
+export default class OpenAIWrapper {
+  openai: OpenAI;
+  path: string;
+
+  constructor() {
+    this.openai = new OpenAI({
+      apiKey: process.env.OPENAI_API_KEY,
+    });
+    this.path = "./src/openai/threads.json";
+  }
+
+  // ASSISTANT HANDLING -------------------------------------------------------------------
+  getAssistants = async () => {
+    const list = await this.openai.beta.assistants.list({
+      limit: 10,
+    });
+
+    const assistants = list.data.map((assistant) => ({
+      id: assistant.id,
+      name: assistant.name,
+    }));
+
+    return assistants;
+  };
+
+  // THREAD HANDLING ----------------------------------------------------------------------
+  saveThread = (thread: Thread) => {
+    const newEntry = {
+      id: thread.id,
+      created_at: thread.created_at,
+    };
+
+    // Read existing file (or start with an empty array if file doesn't exist)
+    let existingData = [];
+    if (fs.existsSync(this.path)) {
+      const fileContent = fs.readFileSync(this.path, "utf-8");
+      try {
+        existingData = JSON.parse(fileContent);
+        if (!Array.isArray(existingData)) existingData = [];
+      } catch (err) {
+        console.error("Invalid JSON, resetting to empty array.");
+        existingData = [];
+      }
+    }
+
+    // Add new entry
+    existingData.push(newEntry);
+
+    // Write updated array back to file
+    try {
+      fs.writeFileSync(this.path, JSON.stringify(existingData, null, 2));
+      return true;
+    } catch (err) {
+      console.error("Error writing file:", err);
+      return false;
+    }
+  };
+
+  deleteThread = async (threadId: string) => {
+    if (!fs.existsSync(this.path)) {
+      console.error("File does not exist.");
+      return false;
+    }
+
+    let threads;
+    try {
+      const fileContent = fs.readFileSync(this.path, "utf-8");
+      threads = JSON.parse(fileContent);
+
+      if (!Array.isArray(threads)) {
+        console.error("JSON is not an array.");
+        return false;
+      }
+    } catch (err) {
+      console.error("Error reading or parsing file:", err);
+      return false;
+    }
+
+    // Filter out the thread to be deleted
+    const updatedThreads = threads.filter((thread) => thread.id !== threadId);
+
+    // Write updated array back and delete the thread
+    try {
+      fs.writeFileSync(this.path, JSON.stringify(updatedThreads, null, 2));
+    } catch (err) {
+      console.error("Error writing file:", err);
+      return false;
+    }
+
+    // delete from openai
+    try {
+      await this.openai.beta.threads.del(threadId);
+      console.log("Thread deleted from OpenAI successfully!");
+    } catch (err) {
+      console.error("Error deleting thread from OpenAI:", err);
+    }
+
+    return true;
+  };
+
+  getThreads = () => {
+    if (!fs.existsSync(this.path)) {
+      console.warn("No threads file found.");
+      return [];
+    }
+
+    try {
+      const fileContent = fs.readFileSync(this.path, "utf-8");
+      const threads = JSON.parse(fileContent);
+
+      if (!Array.isArray(threads)) {
+        console.error("Invalid format: threads.json should contain an array.");
+        return [];
+      }
+
+      return threads;
+    } catch (err) {
+      console.error("Error reading or parsing threads file:", err);
+      return [];
+    }
+  };
+
+  createThread = async () => {
+    const thread = await this.openai.beta.threads.create();
+    const success = this.saveThread(thread);
+    if (success) return thread;
+    else {
+      await this.openai.beta.threads.del(thread.id);
+      console.error("Failed to save thread locally, deleted from OpenAI.");
+      return null;
+    }
+  };
+}
