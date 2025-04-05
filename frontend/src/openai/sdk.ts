@@ -5,7 +5,7 @@ import { Thread } from "openai/resources/beta/threads/threads.mjs";
 
 dotenv.config();
 
-export default class OpenAIWrapper {
+export default class OpenAISDK {
   openai: OpenAI;
   path: string;
 
@@ -13,7 +13,7 @@ export default class OpenAIWrapper {
     this.openai = new OpenAI({
       apiKey: process.env.OPENAI_API_KEY,
     });
-    this.path = "./src/openai/threads.json";
+    this.path = "./src/openai/data.json";
   }
 
   // ASSISTANT HANDLING -------------------------------------------------------------------
@@ -136,5 +136,59 @@ export default class OpenAIWrapper {
       console.error("Failed to save thread locally, deleted from OpenAI.");
       return null;
     }
+  };
+
+  // MESSAGE HANDLING -----------------------------------------------------------------
+  addMessageToThread = async (threadId: string, content: string) => {
+    try {
+      return await this.openai.beta.threads.messages.create(threadId, {
+        role: "user",
+        content,
+      });
+    } catch (err) {
+      console.error("Error adding message to thread");
+      return null;
+    }
+  };
+
+  getMessagesFromThread = async (threadId: string) => {
+    try {
+      const threadMessages = await this.openai.beta.threads.messages.list(
+        threadId,
+        {
+          limit: 10,
+          order: "asc",
+        }
+      );
+
+      return threadMessages.data.map((message) => ({
+        id: message.id,
+        role: message.role,
+        content: message.content,
+        assistantId: message.assistant_id,
+      }));
+    } catch (err) {
+      console.error("Error fetching messages from thread");
+      return null;
+    }
+  };
+
+  // RUN HANDLING -----------------------------------------------------------------
+  createRun = (threadId: string, assistantId: string) => {
+    try {
+      return this.openai.beta.threads.runs.stream(threadId, {
+        assistant_id: assistantId,
+        metadata: {
+          assistant_id: assistantId,
+        },
+      });
+    } catch (err) {
+      console.error("Error creating run");
+      return null;
+    }
+  };
+
+  cancelRun = async (threadId: string, runId: string) => {
+    return await this.openai.beta.threads.runs.cancel(threadId, runId);
   };
 }
