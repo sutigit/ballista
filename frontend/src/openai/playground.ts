@@ -137,6 +137,48 @@ async function command() {
         });
         break;
 
+      // LIST ASSISTANTS IN ROOM
+      case "lar":
+        rl.question("Room ID: ", (roomId) => {
+          (async () => {
+            const assistants = await room.getAssistantsInRoom(roomId);
+            if (assistants.length === 0) {
+              console.log("No assistants in room");
+            } else if (assistants > 0) {
+              console.log("Assistants in room:");
+              assistants.forEach((assistantId: string) => {
+                console.log(`Assistant ID: ${assistantId}`);
+              });
+            } else {
+              console.log("Failed to get assistants in room");
+            }
+            console.log("");
+            command();
+          })();
+        });
+        break;
+
+      // ADD ASSISTANT TO ROOM
+      case "aar":
+        rl.question("Room ID: ", (roomId) => {
+          rl.question("Assistant ID: ", (assistantId) => {
+            (async () => {
+              const updatedRoom = await room.addAssistantToRoom(
+                roomId,
+                assistantId
+              );
+              if (updatedRoom) {
+                console.log("Assistant added to room successfully!");
+              } else {
+                console.log("Failed to add assistant to room");
+              }
+              console.log("");
+              command();
+            })();
+          });
+        });
+        break;
+
       // THREAD COMMANDS -----------------------------------------------------------------------------------
       // CREATE A THREAD
       case "ct":

@@ -6,9 +6,11 @@ const osdk = new OpenAISDK();
 
 export default class Room {
   path: string;
+  maxAssistants: number;
 
   constructor() {
     this.path = "./src/openai/data/rooms.json";
+    this.maxAssistants = 4;
   }
 
   getRooms() {
@@ -130,9 +132,76 @@ export default class Room {
     }
   }
 
-  addAssistant(assistantId: string) {}
+  private updateRoom(
+    roomId: string,
+    newRoomData: { assistants?: string[]; threadId?: string }
+  ) {
+    const rooms = this.getRooms();
+    const roomIndex = rooms.findIndex((room) => room.id === roomId);
+    if (roomIndex === -1) {
+      console.error("Room not found");
+      return false;
+    }
 
-  removeAssistant(assistantId: string) {}
+    // Destructure current room data and merge with new data
+    const updatedRoom = { ...rooms[roomIndex], ...newRoomData };
 
-  listAssistants(roomId: string) {}
+    // Update room in the array
+    rooms[roomIndex] = updatedRoom;
+
+    // Write updated array back to file
+    try {
+      fs.writeFileSync(this.path, JSON.stringify(rooms, null, 2));
+      return updatedRoom;
+    } catch (err) {
+      console.error("Error writing file:", err);
+      return false;
+    }
+  }
+
+  getAssistantsInRoom(roomId: string) {
+    const room = this.inspectRoom(roomId);
+    if (!room) {
+      console.error("Room not found");
+      return false;
+    }
+
+    return room.assistants;
+  }
+
+  addAssistantToRoom(roomId: string, assistantId: string) {
+    const room = this.inspectRoom(roomId);
+
+    if (!room) {
+      console.error("Room not found");
+      return false;
+    }
+
+    if (room.assistants.length >= this.maxAssistants) {
+      console.error("Room is full");
+      return false;
+    }
+
+    if (room.assistants.includes(assistantId)) {
+      console.error("Assistant already in room");
+      return false;
+    }
+
+    // Add assistant to room
+    room.assistants.push(assistantId);
+
+    // Update room in the file
+    const updatedRoom = this.updateRoom(roomId, {
+      assistants: room.assistants,
+    });
+
+    if (!updatedRoom) {
+      console.error("Failed to update room");
+      return false;
+    }
+
+    return updatedRoom;
+  }
+
+  removeAssistantFromRoom(roomId: string, assistantId: string) {}
 }

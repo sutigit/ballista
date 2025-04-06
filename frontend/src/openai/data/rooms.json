@@ -1,7 +1,10 @@
 [
   {
     "id": "room_5d_3hwHz8OasAnNcpQaLa",
-    "assistants": [],
+    "assistants": [
+      "asst_QjKL8KqxOkkqx5mM3Ks7ukmb",
+      "asst_JtU4ImhP46FsruFVIS9rN10g"
+    ],
     "threadId": "thread_iqxMgf87pnUw0bJJ77CcxEBo"
   },
   {
