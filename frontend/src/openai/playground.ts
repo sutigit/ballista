@@ -1,7 +1,9 @@
 import OpenAISDK from "./sdk";
+import Room from "./room";
 import readline from "readline";
 
 const sdk = new OpenAISDK();
+const room = new Room();
 const rl = readline.createInterface({
   input: process.stdin,
   output: process.stdout,
@@ -10,32 +12,43 @@ const rl = readline.createInterface({
 function printCommands() {
   console.log("COMMANDS");
   console.log("");
-  console.log("Assistants --------------------");
-  console.log("la - list assistants");
+  console.log("Assistants 🤖 --------------------");
+  console.log("la - list all assistants");
   console.log("");
 
-  console.log("Threads --------------------");
-  console.log("ct - create thread");
+  console.log("Rooms 🚪 --------------------------");
+  console.log("lr - list all rooms");
+  console.log("cr - create room");
+  console.log("ir - inspect room");
+  console.log("dr - delete room");
+
+  console.log("lar - list assistants in room");
+  console.log("aar - add assistant to room");
+  console.log("rar - remove assistant from room");
+  console.log("");
+
+  console.log("LEGACY #########################");
+  console.log("Threads 🧵 ------------------------");
   console.log("lt - list threads");
+  console.log("ct - create thread");
   console.log("dt - delete thread");
   console.log("");
 
-  console.log("Messaging --------------------");
+  console.log("Messaging 💬 ----------------------");
   console.log("am - add message to thread");
   console.log("gm - get messages from thread");
   console.log("");
 
-  console.log("Runs --------------------");
-  console.log("cr - create run");
-  console.log("qr - quit run");
+  console.log("Runs ▶️ ---------------------------");
+  console.log("rt - run thread");
   console.log("");
 
-  console.log("Quit --------------------");
+  console.log("Quit ❌ ---------------------------");
   console.log("q - quit");
   console.log("");
 }
 
-async function play() {
+async function command() {
   rl.question("Command: ", (answer) => {
     console.log("");
 
@@ -47,11 +60,78 @@ async function play() {
 
           console.log("Assistants:");
           assistants.forEach((assistant) => {
-            console.log(`${assistant.name}: ${assistant.id}`);
+            console.log(
+              `Assistant ID: ${assistant.id}, name: ${assistant.name}`
+            );
           });
           console.log("");
-          play();
+          command();
         })();
+        break;
+
+      // LIST ROOMS
+      case "lr":
+        (async () => {
+          const rooms = room.getRooms();
+
+          console.log("Rooms:");
+          rooms.forEach((room) => {
+            console.log(`Room ID: ${room.id}`);
+          });
+          console.log("");
+          command();
+        })();
+        break;
+
+      // CREATE ROOM
+      case "cr":
+        (async () => {
+          const newRoom = await room.createRoom();
+          if (newRoom) {
+            console.log("Room created successfully!", newRoom.id);
+          }
+          console.log("");
+          command();
+        })();
+        break;
+
+      // DELETE ROOM
+      case "dr":
+        rl.question("Room ID: ", (roomId) => {
+          (async () => {
+            const deletedRoom = await room.deleteRoom(roomId);
+            if (deletedRoom) {
+              console.log("Room deleted successfully!");
+            } else {
+              console.log("Failed to delete room");
+            }
+            console.log("");
+            command();
+          })();
+        });
+        break;
+
+      // INSPECT ROOM
+      case "ir":
+        rl.question("Room ID: ", (roomId) => {
+          (async () => {
+            const roomData = await room.inspectRoom(roomId);
+            if (roomData) {
+              console.log("---------------------");
+              console.log("Room ID:", roomData.id);
+              console.log("Thread ID:", roomData.threadId);
+              console.log("Number of assistants:", roomData.assistants.length);
+              console.log("Assistants in room:");
+              roomData.assistants.forEach((assistantId: string) => {
+                console.log(`Assistant ID: ${assistantId}`);
+              });
+            } else {
+              console.log("Failed to inspect room");
+            }
+            console.log("");
+            command();
+          })();
+        });
         break;
 
       // CREATE A THREAD
@@ -64,7 +144,7 @@ async function play() {
             console.log("Failed to create thread");
           }
           console.log("");
-          play();
+          command();
         })();
         break;
 
@@ -76,7 +156,7 @@ async function play() {
           console.log(`Thread ID: ${thread.id}`);
         });
         console.log("");
-        play();
+        command();
         break;
 
       // DELETE THREAD
@@ -90,7 +170,7 @@ async function play() {
               console.log("Failed to delete thread from threads.json");
             }
             console.log("");
-            play();
+            command();
           })();
         });
         break;
@@ -107,7 +187,7 @@ async function play() {
                 console.log("Failed to add message to thread");
               }
               console.log("");
-              play();
+              command();
             })();
           });
         });
@@ -135,13 +215,13 @@ async function play() {
             } else {
               console.log("Failed to get messages from thread");
             }
-            play();
+            command();
           })();
         });
         break;
 
       // CREATE RUN
-      case "cr":
+      case "rt":
         rl.question("Thread ID: ", (threadId) => {
           rl.question("Assistant ID: ", (assistantId) => {
             const run = sdk.createRun(threadId, assistantId);
@@ -155,17 +235,17 @@ async function play() {
                 )
                 .on("end", () => {
                   console.log("");
-                  play();
+                  command();
                 })
                 .on("error", (err) => {
                   console.error("Error in run:", err);
                   console.log("");
-                  play();
+                  command();
                 });
             } else {
               console.log("Failed to create run");
               console.log("");
-              play();
+              command();
             }
           });
         });
@@ -180,10 +260,10 @@ async function play() {
       default:
         console.log("Invalid command");
         console.log("");
-        play();
+        command();
     }
   });
 }
 
 printCommands();
-play();
+command();

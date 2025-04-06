@@ -13,7 +13,7 @@ export default class OpenAISDK {
     this.openai = new OpenAI({
       apiKey: process.env.OPENAI_API_KEY,
     });
-    this.path = "./src/openai/data.json";
+    this.path = "./src/openai/data/threads.json";
   }
 
   // ASSISTANT HANDLING -------------------------------------------------------------------
