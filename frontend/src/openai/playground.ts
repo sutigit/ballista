@@ -4,6 +4,7 @@ import readline from "readline";
 
 const sdk = new OpenAISDK();
 const room = new Room();
+
 const rl = readline.createInterface({
   input: process.stdin,
   output: process.stdout,
@@ -29,7 +30,7 @@ function printCommands() {
 
   console.log("LEGACY #########################");
   console.log("Threads 🧵 ------------------------");
-  console.log("lt - list threads");
+  console.log("lt - list all threads");
   console.log("ct - create thread");
   console.log("dt - delete thread");
   console.log("");
