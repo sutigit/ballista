@@ -2,13 +2,14 @@
   {
     "id": "room_Cf0GlF-qKaoavUXpZuWHC",
     "description": "New Discussion",
-    "threadId": "thread_v4r1Nh9ETLSkqowWuRsS4EEi",
+    "threadId": "thread_dfypp0x47a6O9utqn3zb5I3L",
     "assistants": [
       "asst_QjKL8KqxOkkqx5mM3Ks7ukmb",
       "asst_JtU4ImhP46FsruFVIS9rN10g"
     ],
     "turnPolicy": "sequential",
-    "turnLimit": 4,
-    "discussionStarter": 0
+    "turnLimit": 2,
+    "discussionStarter": 0,
+    "discussionTopic": "Red dawn of bananas"
   }
 ]
