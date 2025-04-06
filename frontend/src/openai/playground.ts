@@ -27,7 +27,7 @@ function printCommands() {
   console.log("aar - add assistant to room");
   console.log("rar - remove assistant from room");
   console.log("");
-  console.log("urt - add discussion topic to room");
+  console.log("urt - update discussion topic to room");
   console.log("drt - delete discussion topic in room");
   console.log("");
   console.log("mpr - modify rooms turn policy");

@@ -2,7 +2,7 @@
   {
     "id": "room_Cf0GlF-qKaoavUXpZuWHC",
     "description": "New Discussion",
-    "threadId": "thread_dfypp0x47a6O9utqn3zb5I3L",
+    "threadId": "thread_TTQeIKMLx6jYC6axp3tn6JJ3",
     "assistants": [
       "asst_QjKL8KqxOkkqx5mM3Ks7ukmb",
       "asst_JtU4ImhP46FsruFVIS9rN10g"
@@ -10,6 +10,6 @@
     "turnPolicy": "sequential",
     "turnLimit": 2,
     "discussionStarter": 0,
-    "discussionTopic": "Red dawn of bananas"
+    "discussionTopic": "90% us tariffs, keep the answers short"
   }
 ]
