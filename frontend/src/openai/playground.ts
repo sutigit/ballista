@@ -53,6 +53,7 @@ async function command() {
     console.log("");
 
     switch (answer) {
+      // ASSISTANT COMMANDS -----------------------------------------------------------------------------------
       // LIST ASSISTANTS
       case "la":
         (async () => {
@@ -69,6 +70,7 @@ async function command() {
         })();
         break;
 
+      // ROOM COMMANDS -----------------------------------------------------------------------------------
       // LIST ROOMS
       case "lr":
         (async () => {
@@ -134,6 +136,7 @@ async function command() {
         });
         break;
 
+      // THREAD COMMANDS -----------------------------------------------------------------------------------
       // CREATE A THREAD
       case "ct":
         (async () => {
@@ -175,6 +178,7 @@ async function command() {
         });
         break;
 
+      // MESSAGING COMMANDS -----------------------------------------------------------------------------------
       // ADD MESSAGE TO THREAD
       case "am":
         rl.question("Thread ID: ", (threadId) => {
@@ -220,6 +224,7 @@ async function command() {
         });
         break;
 
+      // RUN COMMANDS -----------------------------------------------------------------------------------
       // CREATE RUN
       case "rt":
         rl.question("Thread ID: ", (threadId) => {
@@ -251,6 +256,7 @@ async function command() {
         });
         break;
 
+      // PLAYGROUND COMMANDS -----------------------------------------------------------------------------------
       // QUIT
       case "q":
         rl.close();
