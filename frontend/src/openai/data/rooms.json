@@ -1,20 +1,14 @@
 [
   {
-    "id": "room_5d_3hwHz8OasAnNcpQaLa",
+    "id": "room_Cf0GlF-qKaoavUXpZuWHC",
+    "description": "New Discussion",
+    "threadId": "thread_v4r1Nh9ETLSkqowWuRsS4EEi",
     "assistants": [
       "asst_QjKL8KqxOkkqx5mM3Ks7ukmb",
       "asst_JtU4ImhP46FsruFVIS9rN10g"
     ],
-    "threadId": "thread_iqxMgf87pnUw0bJJ77CcxEBo"
-  },
-  {
-    "id": "room_dS1kx5IbIUyg3MVR2MU1Z",
-    "assistants": [],
-    "threadId": "thread_GRHnmQTNLHxEAPtvlIXiD2cM"
-  },
-  {
-    "id": "room_HpPb2UzBdJJgwSPfRmVee",
-    "assistants": [],
-    "threadId": "thread_dGIqIvWeTHKsHcuqtmWoFcAg"
+    "turnPolicy": "sequential",
+    "turnLimit": 4,
+    "discussionStarter": 0
   }
 ]

@@ -1,9 +1,9 @@
 import OpenAISDK from "./sdk";
-import Room from "./room";
+import RoomAPI, { type Room } from "./room";
 import readline from "readline";
 
 const sdk = new OpenAISDK();
-const room = new Room();
+const room = new RoomAPI();
 
 const rl = readline.createInterface({
   input: process.stdin,
@@ -22,27 +22,36 @@ function printCommands() {
   console.log("cr - create room");
   console.log("ir - inspect room");
   console.log("dr - delete room");
-
+  console.log("");
   console.log("lar - list assistants in room");
   console.log("aar - add assistant to room");
   console.log("rar - remove assistant from room");
   console.log("");
-
-  console.log("LEGACY #########################");
-  console.log("Threads 🧵 ------------------------");
-  console.log("lt - list all threads");
-  console.log("ct - create thread");
-  console.log("dt - delete thread");
+  console.log("atr - add discussion topic to room");
+  console.log("");
+  console.log("mpr - modify rooms turn policy");
+  console.log("mnt - modify rooms number of turns");
+  console.log("mds - modify discussion starter");
+  console.log("");
+  console.log("rrt - reset rooms discussion thread");
+  console.log("rr - reset room");
   console.log("");
 
-  console.log("Messaging 💬 ----------------------");
-  console.log("am - add message to thread");
-  console.log("gm - get messages from thread");
-  console.log("");
+  // console.log("LEGACY #########################");
+  // console.log("Threads 🧵 ------------------------");
+  // console.log("lt - list all threads");
+  // console.log("ct - create thread");
+  // console.log("dt - delete thread");
+  // console.log("");
 
-  console.log("Runs ▶️ ---------------------------");
-  console.log("rt - run thread");
-  console.log("");
+  // console.log("Messaging 💬 ----------------------");
+  // console.log("am - add message to thread");
+  // console.log("gm - get messages from thread");
+  // console.log("");
+
+  // console.log("Runs ▶️ ---------------------------");
+  // console.log("rt - run thread");
+  // console.log("");
 
   console.log("Quit ❌ ---------------------------");
   console.log("q - quit");
@@ -75,7 +84,7 @@ async function command() {
       // LIST ROOMS
       case "lr":
         (async () => {
-          const rooms = room.getRooms();
+          const rooms: Room[] = room.getRooms();
 
           console.log("Rooms:");
           rooms.forEach((room) => {
@@ -89,7 +98,7 @@ async function command() {
       // CREATE ROOM
       case "cr":
         (async () => {
-          const newRoom = await room.createRoom();
+          const newRoom: Room | false = await room.createRoom();
           if (newRoom) {
             console.log("Room created successfully!", newRoom.id);
           }
@@ -102,7 +111,7 @@ async function command() {
       case "dr":
         rl.question("Room ID: ", (roomId) => {
           (async () => {
-            const deletedRoom = await room.deleteRoom(roomId);
+            const deletedRoom: Room | false = await room.deleteRoom(roomId);
             if (deletedRoom) {
               console.log("Room deleted successfully!");
             } else {
@@ -118,16 +127,21 @@ async function command() {
       case "ir":
         rl.question("Room ID: ", (roomId) => {
           (async () => {
-            const roomData = await room.inspectRoom(roomId);
+            const roomData: Room | false = room.inspectRoom(roomId);
             if (roomData) {
               console.log("---------------------");
               console.log("Room ID:", roomData.id);
+              console.log("Description:", roomData.description);
               console.log("Thread ID:", roomData.threadId);
               console.log("Number of assistants:", roomData.assistants.length);
               console.log("Assistants in room:");
               roomData.assistants.forEach((assistantId: string) => {
                 console.log(`Assistant ID: ${assistantId}`);
               });
+              console.log("Turn Policy:", roomData.turnPolicy);
+              console.log("Turn Limit:", roomData.turnLimit);
+              console.log("Discussion Starter:", roomData.discussionStarter);
+              console.log("---------------------");
             } else {
               console.log("Failed to inspect room");
             }
@@ -141,10 +155,12 @@ async function command() {
       case "lar":
         rl.question("Room ID: ", (roomId) => {
           (async () => {
-            const assistants = await room.getAssistantsInRoom(roomId);
-            if (assistants.length === 0) {
+            const assistants: string[] | false =
+              room.getAssistantsInRoom(roomId);
+
+            if (assistants && assistants.length === 0) {
               console.log("No assistants in room");
-            } else if (assistants > 0) {
+            } else if (assistants && assistants.length > 0) {
               console.log("Assistants in room:");
               assistants.forEach((assistantId: string) => {
                 console.log(`Assistant ID: ${assistantId}`);
@@ -163,7 +179,7 @@ async function command() {
         rl.question("Room ID: ", (roomId) => {
           rl.question("Assistant ID: ", (assistantId) => {
             (async () => {
-              const updatedRoom = await room.addAssistantToRoom(
+              const updatedRoom: Room | false = await room.addAssistantToRoom(
                 roomId,
                 assistantId
               );

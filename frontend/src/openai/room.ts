@@ -4,13 +4,29 @@ import { nanoid } from "nanoid";
 
 const osdk = new OpenAISDK();
 
-export default class Room {
+export interface Room {
+  id: string;
+  description: string;
+  threadId: string;
+  assistants: string[];
+  turnPolicy: "random" | "sequential";
+  turnLimit: number;
+  discussionStarter: number;
+}
+
+export default class RoomAPI {
   path: string;
   maxAssistants: number;
+  defaultTurnLimit: number;
+  defaultTurnPolicy: "random" | "sequential";
+  defaultDiscussionStarter: number;
 
   constructor() {
     this.path = "./src/openai/data/rooms.json";
     this.maxAssistants = 4;
+    this.defaultTurnLimit = 4;
+    this.defaultTurnPolicy = "sequential";
+    this.defaultDiscussionStarter = 0;
   }
 
   getRooms() {
@@ -42,10 +58,14 @@ export default class Room {
       return false;
     }
 
-    const newRoom = {
+    const newRoom: Room = {
       id: "room_" + nanoid(),
-      assistants: [],
+      description: "New Discussion",
       threadId: thread.id,
+      assistants: [],
+      turnPolicy: this.defaultTurnPolicy,
+      turnLimit: this.defaultTurnLimit,
+      discussionStarter: this.defaultDiscussionStarter,
     };
 
     let existingData = [];
@@ -121,7 +141,7 @@ export default class Room {
     }
   }
 
-  inspectRoom(roomId: string) {
+  inspectRoom(roomId: string): Room | false {
     const rooms = this.getRooms();
     const room = rooms.find((room) => room.id === roomId);
     if (!room) {
