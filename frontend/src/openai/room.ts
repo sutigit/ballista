@@ -22,12 +22,17 @@ export default class RoomAPI {
   defaultTurnPolicy: "random" | "sequential";
   defaultDiscussionStarter: number;
 
+  events: { [key: string]: Function[] };
+
   constructor() {
     this.path = "./src/openai/data/rooms.json";
     this.maxAssistants = 4;
     this.defaultTurnLimit = 3;
     this.defaultTurnPolicy = "sequential";
     this.defaultDiscussionStarter = 0;
+
+    // For observer pattern
+    this.events = {};
   }
 
   getRooms() {
@@ -235,7 +240,7 @@ export default class RoomAPI {
 
   removeAssistantFromRoom(roomId: string, assistantId: string) {}
 
-  updateRoomTopic(roomId: string, topic: string) {
+  async updateRoomTopic(roomId: string, topic: string) {
     const room = this.inspectRoom(roomId);
     if (!room) {
       console.error("Room not found");
@@ -249,6 +254,13 @@ export default class RoomAPI {
 
     if (!updatedRoom) {
       console.error("Failed to update room");
+      return false;
+    }
+
+    // Add the topic to thread
+    const message = await osdk.addMessageToThread(room.threadId, topic);
+    if (!message) {
+      this.deleteRoomTopic(roomId);
       return false;
     }
 
@@ -272,117 +284,10 @@ export default class RoomAPI {
       return false;
     }
 
+    // Reset the thread
+    const resetThread = this.resetRoomThread(roomId);
+
     return updatedRoom;
-  }
-
-  async startDiscussionInRoom(roomId: string) {
-    const room = this.inspectRoom(roomId);
-    if (!room) {
-      console.error("Room not found");
-      return false;
-    }
-
-    if (!room.threadId) {
-      console.error("Room is no longer valid");
-      return false;
-    }
-
-    if (room.assistants.length === 0) {
-      console.error("Must have at least one assistant in the room");
-      return false;
-    }
-
-    if (room.discussionTopic === null) {
-      console.error("Must have a discussion topic");
-      return false;
-    }
-
-    if (room.turnLimit <= 0) {
-      console.error("Turn limit must be greater than 0");
-      return false;
-    }
-
-    if (
-      room.discussionStarter < 0 ||
-      room.discussionStarter >= room.assistants.length
-    ) {
-      console.error("Invalid discussion starter");
-      return false;
-    }
-
-    // Add the topic to thread
-    const message = await osdk.addMessageToThread(
-      room.threadId,
-      room.discussionTopic
-    );
-    if (!message) {
-      console.error(
-        "Failed to start discussion because failed to add topic to thread, please try again"
-      );
-      return false;
-    }
-
-    // Start discussion
-    let currentTurn: number = 0;
-    let assistantTurn: number = room.discussionStarter;
-    let selectedAssistantId: string = room.assistants[assistantTurn];
-
-    while (currentTurn < room.turnLimit) {
-      // Let everybody speak per turn
-      for (let i = 0; i < room.assistants.length; i++) {
-        try {
-          await this.streamRun(room.threadId, selectedAssistantId);
-        } catch (err) {
-          console.error("Error in stream run:", err);
-          return false; // Stop the discussion on error
-        }
-
-        // Determine the next assistant to speak
-        if (room.turnPolicy === "sequential") {
-          assistantTurn = (assistantTurn + 1) % room.assistants.length;
-        } else if (room.turnPolicy === "random") {
-          // Todo: implement random turn policy
-        }
-
-        // Assign next assistant to speak
-        selectedAssistantId = room.assistants[assistantTurn];
-      }
-
-      currentTurn++;
-    }
-
-    return true;
-  }
-
-  private async streamRun(
-    threadId: string,
-    assistantId: string
-  ): Promise<void> {
-    return new Promise<void>((resolve, reject) => {
-      const run = osdk.createRun(threadId, assistantId);
-
-      if (run) {
-        run
-          .on("textCreated", (text) =>
-            process.stdout.write(`\n>> Assistant ID: ${assistantId}\n`)
-          )
-          .on("textDelta", (textDelta, snapshot) =>
-            process.stdout.write(textDelta.value || "")
-          )
-          .on("end", () => {
-            process.stdout.write("\n");
-            resolve(); // resolve the promise on end
-          })
-          .on("error", (err) => {
-            console.error("Error in run:", err);
-            process.stdout.write("\n");
-            reject(err); // reject the promise on error
-          });
-      } else {
-        console.error("Failed to create run");
-        reject(new Error("Failed to create run")); // reject if run is not created
-      }
-    });
   }
 
   async getDiscussionInRoom(roomId: string) {

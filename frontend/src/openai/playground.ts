@@ -1,8 +1,11 @@
 import OpenAISDK from "./sdk";
 import RoomAPI, { type Room } from "./room";
+import RoomRunner from "./roomRunner";
 import readline from "readline";
+import { Text, TextDelta } from "openai/resources/beta/threads/messages.mjs";
 
 const sdk = new OpenAISDK();
+const roomrun = new RoomRunner();
 const room = new RoomAPI();
 
 const rl = readline.createInterface({
@@ -41,20 +44,20 @@ function printCommands() {
   console.log("rr - reset room");
   console.log("");
 
-  console.log("Threads 🧵 ------------------------");
-  console.log("lt - list all threads");
-  console.log("ct - create thread");
-  console.log("dt - delete thread");
-  console.log("");
+  // console.log("Threads 🧵 ------------------------");
+  // console.log("lt - list all threads");
+  // console.log("ct - create thread");
+  // console.log("dt - delete thread");
+  // console.log("");
 
-  console.log("Messaging 💬 ----------------------");
-  console.log("am - add message to thread");
-  console.log("gm - get messages from thread");
-  console.log("");
+  // console.log("Messaging 💬 ----------------------");
+  // console.log("am - add message to thread");
+  // console.log("gm - get messages from thread");
+  // console.log("");
 
-  console.log("Runs ▶️ ---------------------------");
-  console.log("rt - run thread");
-  console.log("");
+  // console.log("Runs ▶️ ---------------------------");
+  // console.log("rt - run thread");
+  // console.log("");
 
   console.log("Playground 🚀 ---------------------------");
   console.log("lc - list commands");
@@ -194,8 +197,8 @@ async function command() {
       // ADD DISCUSSION TOPIC TO ROOM
       case "urt":
         rl.question("Room ID: ", (roomId) => {
-          rl.question("Discussion Topic: ", (topic) => {
-            const updatedRoom: Room | false = room.updateRoomTopic(
+          rl.question("Discussion Topic: ", async (topic) => {
+            const updatedRoom: Room | false = await room.updateRoomTopic(
               roomId,
               topic
             );
@@ -253,13 +256,43 @@ async function command() {
       // START DISCUSSION IN ROOM
       case "sr":
         rl.question("Room ID: ", async (roomId) => {
-          const discussion = await room.startDiscussionInRoom(roomId);
-          console.log("");
-          if (discussion) {
-            console.log("Discussion ended successfully!");
-          } else {
-            console.log("Discussion failed");
-          }
+          const roomrun = new RoomRunner();
+
+          roomrun
+            .on("discussionStarted", () => {
+              console.log("Discussion started! ✨🚀");
+              console.log("");
+            })
+            .on("nextSpeakerTurn", (assistantId: string) => {
+              console.log("Next speaker ⏭️");
+              console.log("");
+            })
+            .on(
+              "roomTextCreated",
+              (data: { assistantId: string; text: Text }) => {
+                console.log("🤖 id: " + data.assistantId);
+              }
+            )
+            .on("roomTextDelta", (data: { textDelta: TextDelta }) => {
+              process.stdout.write(data.textDelta.value || "");
+            })
+            .on("roomTextEnded", () => {
+              console.log("");
+            })
+            .on("speakerTurnEnd", () => {
+              console.log("");
+            })
+            .on("discussionEnded", () => {
+              console.log("Discussion ended ⛳");
+              console.log("");
+            })
+            .on("error", (err: any) => {
+              console.error("Error in discussion 💀💀💀");
+              console.log("");
+            });
+
+          await roomrun.startDiscussion(roomId);
+
           console.log("");
           command();
         });
